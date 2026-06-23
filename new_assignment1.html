@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Assignment 1</title>
+  <style>
+    body {
+      font-family: Verdana, sans-serif;
+      background-color: #e8f0fe;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      background-color: #4a90d9;
+      color: white;
+      padding: 15px;
+      border-radius: 6px;
+    }
+
+    h2 {
+      color: #4a90d9;
+      margin-top: 0;
+    }
+
+    .box {
+      background-color: white;
+      border-left: 5px solid #4a90d9;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    input[type="text"], input[type="number"], select {
+      padding: 7px;
+      margin: 4px 4px 8px 0;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      width: 200px;
+      font-size: 13px;
+    }
+
+    button {
+      padding: 8px 14px;
+      background-color: #4a90d9;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      margin: 3px;
+    }
+
+    button:hover {
+      background-color: #357abd;
+    }
+
+    .output-box {
+      background: #f0f6ff;
+      border: 1px solid #b0c8e8;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+      min-height: 40px;
+      font-size: 14px;
+    }
+
+    /* INVENTORY */
+    .item-row {
+      padding: 7px 0;
+      border-bottom: 1px dashed #ccc;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-row button {
+      background: #e05555;
+      padding: 4px 9px;
+      font-size: 12px;
+    }
+
+    .item-row button:hover {
+      background: #b03030;
+    }
+
+    /* PRODUCT GRID */
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .product-card {
+      background: #f7f9ff;
+      border: 1px solid #b0c8e8;
+      border-radius: 5px;
+      padding: 12px;
+      width: 140px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .product-card p {
+      margin: 4px 0;
+    }
+
+    .product-card button {
+      background: #27ae60;
+      font-size: 12px;
+      padding: 5px 10px;
+    }
+
+    .product-card button:hover {
+      background: #1e8449;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px dotted #ccc;
+      font-size: 14px;
+    }
+
+    .cart-item button {
+      background: #e05555;
+      padding: 3px 8px;
+      font-size: 12px;
+    }
+
+    #cart-total {
+      font-weight: bold;
+      font-size: 15px;
+      margin-top: 8px;
+      color: #333;
+    }
+
+    /* QUIZ */
+    #quiz-container {
+      background: #f0f6ff;
+      border: 1px solid #b0c8e8;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    #quiz-question {
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .opt {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: white;
+      color: #333;
+      border: 1px solid #aaa;
+      margin: 5px 0;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .opt:hover {
+      background: #ddeeff;
+    }
+
+    .opt.correct { background: #27ae60; color: white; }
+    .opt.wrong   { background: #e05555; color: white; }
+
+    #quiz-feedback {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    #quiz-next {
+      display: none;
+      margin-top: 10px;
+    }
+
+    #quiz-result {
+      display: none;
+      text-align: center;
+      font-size: 17px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>JavaScript & DOM — Assignment 1</h1>
+
+  <!-- ====== TASK 1: INVENTORY SYSTEM ====== -->
+  <div class="box">
+    <h2>Task 1: Student Inventory System</h2>
+
+    <input type="text" id="itemName" placeholder="Item Name" />
+    <input type="number" id="itemQty" placeholder="Quantity" />
+    <input type="text" id="itemCategory" placeholder="Category" />
+    <br/>
+    <button onclick="addItem()">Add Item</button>
+    <button onclick="showLowStock()">Show Low Stock (&lt; 5)</button>
+
+    <p><strong>All Items:</strong></p>
+    <div id="itemList" class="output-box">No items added yet.</div>
+
+    <p><strong>Low Stock Items:</strong></p>
+    <div id="lowStock" class="output-box"></div>
+  </div>
+
+
+  <!-- ====== TASK 2: TECH STORE CART ====== -->
+  <div class="box">
+    <h2>Task 2: Tech Store Shopping Cart</h2>
+
+    <div class="product-grid" id="productGrid"></div>
+
+    <h3>Your Cart</h3>
+    <div id="techCart" class="output-box">Cart is empty.</div>
+    <div id="cart-total">Total: ₦0</div>
+  </div>
+
+
+  <!-- ====== TASK 3: QUIZ ====== -->
+  <div class="box">
+    <h2>Task 3: JavaScript Quiz</h2>
+    <div id="quiz-container">
+      <div id="quiz-question"></div>
+      <div id="quiz-options"></div>
+      <div id="quiz-feedback"></div>
+      <button id="quiz-next" onclick="nextQ()">Next ➜</button>
+    </div>
+    <div id="quiz-result"></div>
+  </div>
+
+
+  <script>
+
+    // ============================================================
+    //  TASK 1: INVENTORY SYSTEM (using classes)
+    // ============================================================
+
+    class Item {
+      constructor(name, qty, category) {
+        this.name = name;
+        this.qty = qty;
+        this.category = category;
+      }
+    }
+
+    class Inventory {
+      constructor() {
+        this.items = [];
+      }
+
+      addItem(item) {
+        this.items.push(item);
+      }
+
+      removeItem(index) {
+        this.items.splice(index, 1);
+      }
+
+      getLowStock() {
+        return this.items.filter(i => i.qty < 5);
+      }
+    }
+
+    let store = new Inventory();
+
+    function addItem() {
+      let name = document.getElementById("itemName").value.trim();
+      let qty = parseInt(document.getElementById("itemQty").value);
+      let category = document.getElementById("itemCategory").value.trim();
+
+      if (!name || isNaN(qty) || !category) {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      store.addItem(new Item(name, qty, category));
+      document.getElementById("itemName").value = "";
+      document.getElementById("itemQty").value = "";
+      document.getElementById("itemCategory").value = "";
+      renderItems();
+    }
+
+    function renderItems() {
+      let div = document.getElementById("itemList");
+      if (store.items.length === 0) {
+        div.innerHTML = "No items added yet.";
+        return;
+      }
+      let html = "";
+      for (let i = 0; i < store.items.length; i++) {
+        let it = store.items[i];
+        html += '<div class="item-row">';
+        html += '<span><strong>' + it.name + '</strong> | Qty: ' + it.qty + ' | Category: ' + it.category + '</span>';
+        html += '<button onclick="deleteItem(' + i + ')">Delete</button>';
+        html += '</div>';
+      }
+      div.innerHTML = html;
+    }
+
+    function deleteItem(index) {
+      store.removeItem(index);
+      renderItems();
+    }
+
+    function showLowStock() {
+      let low = store.getLowStock();
+      let div = document.getElementById("lowStock");
+      if (low.length === 0) {
+        div.innerHTML = "No items with low stock.";
+        return;
+      }
+      let html = "";
+      for (let it of low) {
+        html += "<p>⚠️ " + it.name + " — Only " + it.qty + " left (" + it.category + ")</p>";
+      }
+      div.innerHTML = html;
+    }
+
+
+    // ============================================================
+    //  TASK 2: TECH STORE SHOPPING CART
+    // ============================================================
+
+    let techProducts = [
+      { name: "Wireless Mouse", price: 4500 },
+      { name: "USB Hub", price: 3200 },
+      { name: "Keyboard", price: 8000 },
+      { name: "Webcam", price: 12000 },
+      { name: "Headphones", price: 6500 }
+    ];
+
+    let techCart = [];
+
+    function renderTechProducts() {
+      let grid = document.getElementById("productGrid");
+      let html = "";
+      for (let i = 0; i < techProducts.length; i++) {
+        let p = techProducts[i];
+        html += '<div class="product-card">';
+        html += '<p><strong>' + p.name + '</strong></p>';
+        html += '<p>₦' + p.price.toLocaleString() + '</p>';
+        html += '<button onclick="addToTechCart(' + i + ')">Add to Cart</button>';
+        html += '</div>';
+      }
+      grid.innerHTML = html;
+    }
+
+    function addToTechCart(i) {
+      techCart.push({ name: techProducts[i].name, price: techProducts[i].price });
+      renderTechCart();
+    }
+
+    function removeFromTechCart(i) {
+      techCart.splice(i, 1);
+      renderTechCart();
+    }
+
+    function renderTechCart() {
+      let div = document.getElementById("techCart");
+      let totalDiv = document.getElementById("cart-total");
+
+      if (techCart.length === 0) {
+        div.innerHTML = "Cart is empty.";
+        totalDiv.innerHTML = "Total: ₦0";
+        return;
+      }
+
+      let html = "";
+      let total = 0;
+      for (let i = 0; i < techCart.length; i++) {
+        let item = techCart[i];
+        total += item.price;
+        html += '<div class="cart-item">';
+        html += '<span>' + item.name + ' — ₦' + item.price.toLocaleString() + '</span>';
+        html += '<button onclick="removeFromTechCart(' + i + ')">Remove</button>';
+        html += '</div>';
+      }
+
+      div.innerHTML = html;
+      totalDiv.innerHTML = "Total: ₦" + total.toLocaleString();
+    }
+
+    renderTechProducts();
+
+
+    // ============================================================
+    //  TASK 3: JAVASCRIPT QUIZ
+    // ============================================================
+
+    let quizQuestions = [
+      {
+        q: "Which of these is used to select an element by its ID in JavaScript?",
+        options: ["document.getElement()", "document.getElementById()", "document.selectId()", "document.queryId()"],
+        answer: 1
+      },
+      {
+        q: "What will typeof 'hello' return?",
+        options: ["number", "undefined", "string", "object"],
+        answer: 2
+      },
+      {
+        q: "Which method adds an element to the end of an array?",
+        options: ["pop()", "push()", "shift()", "splice()"],
+        answer: 1
+      },
+      {
+        q: "What does the DOM stand for?",
+        options: ["Data Object Model", "Document Object Model", "Display Output Method", "Document Order Map"],
+        answer: 1
+      },
+      {
+        q: "How do you write a comment in JavaScript?",
+        options: ["<!-- comment -->", "# comment", "// comment", "** comment **"],
+        answer: 2
+      }
+    ];
+
+    let qIndex = 0;
+    let qScore = 0;
+    let qAnswered = false;
+
+    function loadQ() {
+      let q = quizQuestions[qIndex];
+      document.getElementById("quiz-question").innerHTML = "Q" + (qIndex + 1) + " of " + quizQuestions.length + ": " + q.q;
+      document.getElementById("quiz-feedback").innerHTML = "";
+      document.getElementById("quiz-next").style.display = "none";
+      document.getElementById("quiz-container").style.backgroundColor = "#f0f6ff";
+      qAnswered = false;
+
+      let optDiv = document.getElementById("quiz-options");
+      optDiv.innerHTML = "";
+      for (let i = 0; i < q.options.length; i++) {
+        let btn = document.createElement("button");
+        btn.className = "opt";
+        btn.innerHTML = q.options[i];
+        btn.onclick = function() { pickAnswer(i, btn); };
+        optDiv.appendChild(btn);
+      }
+    }
+
+    function pickAnswer(selected, clickedBtn) {
+      if (qAnswered) return;
+      qAnswered = true;
+
+      let q = quizQuestions[qIndex];
+      let allOpts = document.querySelectorAll(".opt");
+
+      if (selected === q.answer) {
+        clickedBtn.classList.add("correct");
+        document.getElementById("quiz-feedback").innerHTML = "✅ Correct!";
+        document.getElementById("quiz-container").style.backgroundColor = "#d4f5e2";
+        qScore++;
+      } else {
+        clickedBtn.classList.add("wrong");
+        allOpts[q.answer].classList.add("correct");
+        document.getElementById("quiz-feedback").innerHTML = "❌ Wrong! Correct answer: " + q.options[q.answer];
+        document.getElementById("quiz-container").style.backgroundColor = "#fde8e8";
+      }
+
+      document.getElementById("quiz-next").style.display = "inline-block";
+    }
+
+    function nextQ() {
+      qIndex++;
+      if (qIndex < quizQuestions.length) {
+        loadQ();
+      } else {
+        document.getElementById("quiz-container").style.display = "none";
+        let result = document.getElementById("quiz-result");
+        result.style.display = "block";
+
+        let pct = (qScore / quizQuestions.length) * 100;
+        let remark = pct >= 80 ? "Excellent! 🏆" : pct >= 60 ? "Good job! 👍" : pct >= 40 ? "Keep practicing! 📖" : "Needs more studying! 😅";
+
+        result.innerHTML = "<h3>Quiz Over!</h3><p>Score: " + qScore + " / " + quizQuestions.length + "</p><p>" + remark + "</p>";
+      }
+    }
+
+    loadQ();
+
+  </script>
+
+</body>
+</html>
